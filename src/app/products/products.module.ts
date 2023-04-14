@@ -7,6 +7,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { ProductComponent } from './components/product/product.component';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,13 @@ import { FormsModule } from '@angular/forms';
     ProductsDetailsComponent,
     ProductComponent,
   ],
-  imports: [CommonModule, SharedModule, HttpClientModule, FormsModule],
+  imports: [
+    CommonModule,
+    SharedModule,
+    HttpClientModule,
+    FormsModule,
+    RouterModule,
+  ],
   // exports: [AllProductsComponent],
 })
 export class ProductsModule {}
