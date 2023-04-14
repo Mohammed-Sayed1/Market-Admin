@@ -8,10 +8,12 @@ import { ProductsService } from '../../services/products.service';
 })
 export class AllProductsComponent implements OnInit {
   products: any[] = [];
+  categories: any[] = [];
   constructor(private service: ProductsService) {}
 
   ngOnInit(): void {
     this.getProducts();
+    this.getCategories();
   }
 
   getProducts() {
@@ -20,8 +22,29 @@ export class AllProductsComponent implements OnInit {
         this.products = res;
       },
       (error) => {
-        console.log(error.message);
+        alert(error.message);
       }
     );
+  }
+
+  getCategories() {
+    return this.service.getAllCategories().subscribe(
+      (res: any) => {
+        this.categories = res;
+      },
+      (error) => {
+        alert(error.message);
+      }
+    );
+  }
+
+  filterCategory(event: any) {
+    let value = event.target.value;
+    value == 'all' ? this.getProducts() : this.getProductsCategory(value);
+  }
+  getProductsCategory(keyword: string) {
+    this.service.getProductsByCategory(keyword).subscribe((res: any) => {
+      this.products = res;
+    });
   }
 }
