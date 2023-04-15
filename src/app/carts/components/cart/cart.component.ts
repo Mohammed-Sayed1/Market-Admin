@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CartsService } from '../../services/carts.service';
+import { CartProduct } from 'src/app/shared/models/cart-product';
+import { Model } from 'src/app/shared/models/model';
 
 @Component({
   selector: 'app-cart',
@@ -7,8 +9,8 @@ import { CartsService } from '../../services/carts.service';
   styleUrls: ['./cart.component.scss'],
 })
 export class CartComponent implements OnInit {
-  cartProducts: any[] = [];
-  total: any = 0;
+  cartProducts: CartProduct[] = [];
+  total: number = 0;
   success: boolean = false;
   constructor(private service: CartsService) {}
 
@@ -56,7 +58,7 @@ export class CartComponent implements OnInit {
     this.total = 0;
     for (let i in this.cartProducts) {
       this.total +=
-        this.cartProducts[i].item.price * this.cartProducts[i].quantity;
+        +this.cartProducts[i].item.price * this.cartProducts[i].quantity;
     }
   }
 
@@ -64,7 +66,7 @@ export class CartComponent implements OnInit {
     let porducts = this.cartProducts.map((item) => {
       return { productId: item.item.id, quantity: item.quantity };
     });
-    let Model = {
+    let Model: Model = {
       userId: 5,
       date: new Date(),
       products: porducts,

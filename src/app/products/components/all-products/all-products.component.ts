@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductsService } from '../../services/products.service';
+import { Product } from '../../../shared/models/product';
+import { CartProduct } from '../../../shared/models/cart-product';
 
 @Component({
   selector: 'app-all-products',
@@ -7,10 +9,10 @@ import { ProductsService } from '../../services/products.service';
   styleUrls: ['./all-products.component.scss'],
 })
 export class AllProductsComponent implements OnInit {
-  products: any[] = [];
-  categories: any[] = [];
+  products: Product[] = [];
+  categories: string[] = [];
   loading: boolean = false;
-  cartProducts: any[] = [];
+  cartProducts: CartProduct[] = [];
   constructor(private service: ProductsService) {}
 
   ngOnInit(): void {

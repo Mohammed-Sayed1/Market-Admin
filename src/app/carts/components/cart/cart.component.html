@@ -38,7 +38,7 @@
             <button class="btn btn-dark" (click)="minsAmount(i)">-</button>
           </div>
         </td>
-        <td>{{ item.item.price * item.quantity }} L.E</td>
+        <td>{{ +item.item.price * item.quantity }} L.E</td>
         <td>
           <button class="btn btn-danger" (click)="deleteProduct(i)">
             Delete
