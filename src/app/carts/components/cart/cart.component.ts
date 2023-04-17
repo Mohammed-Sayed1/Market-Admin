@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CartsService } from '../../services/carts.service';
 import { CartProduct } from 'src/app/shared/models/cart-product';
 import { Model } from 'src/app/shared/models/model';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ProductsService } from 'src/app/products/services/products.service';
 
 @Component({
   selector: 'app-cart',
@@ -9,71 +11,60 @@ import { Model } from 'src/app/shared/models/model';
   styleUrls: ['./cart.component.scss'],
 })
 export class CartComponent implements OnInit {
-  cartProducts: CartProduct[] = [];
-  total: number = 0;
-  success: boolean = false;
-  constructor(private service: CartsService) {}
+  carts: any[] = [];
+  products: any[] = [];
+  total = 0;
+  form!: FormGroup;
+  details: any;
+  constructor(
+    private service: CartsService,
+    private build: FormBuilder,
+    private productService: ProductsService
+  ) {}
 
   ngOnInit(): void {
-    this.getCartPorducts();
+    this.form = this.build.group({
+      start: [''],
+      end: [''],
+    });
+    this.getAllCarts();
   }
 
-  getCartPorducts() {
-    if ('cart' in localStorage) {
-      this.cartProducts = JSON.parse(localStorage.getItem('cart')!);
-    }
-    this.getCartTotal();
+  getAllCarts() {
+    this.service.getAllCarts().subscribe((res: any) => {
+      this.carts = res;
+    });
   }
 
-  addAmount(index: number) {
-    this.cartProducts[index].quantity++;
-    this.getCartTotal();
-    localStorage.setItem('cart', JSON.stringify(this.cartProducts));
+  applyFilter() {
+    let date = this.form.value;
+    this.service.getAllCarts(date).subscribe((res: any) => {
+      this.carts = res;
+    });
   }
 
-  minsAmount(index: number) {
-    this.cartProducts[index].quantity--;
-    this.getCartTotal();
-    localStorage.setItem('cart', JSON.stringify(this.cartProducts));
+  deleteCart(id: number) {
+    this.service.deleteCart(id).subscribe((res) => {
+      this.getAllCarts();
+      alert('Cart Deleted successfully');
+    });
   }
 
-  detectChange() {
-    this.getCartTotal();
-    localStorage.setItem('cart', JSON.stringify(this.cartProducts));
-  }
-
-  deleteProduct(index: number) {
-    this.cartProducts.splice(index, 1);
-    this.getCartTotal();
-    localStorage.setItem('cart', JSON.stringify(this.cartProducts));
-  }
-
-  clearCart() {
-    this.cartProducts = [];
-    this.getCartTotal();
-    localStorage.setItem('cart', JSON.stringify(this.cartProducts));
-  }
-
-  getCartTotal() {
+  view(index: number) {
+    this.products = [];
     this.total = 0;
-    for (let i in this.cartProducts) {
-      this.total +=
-        +this.cartProducts[i].item.price * this.cartProducts[i].quantity;
+    this.details = this.carts[index];
+    for (let i in this.details.products) {
+      this.productService
+        .getProductById(this.details.products[i].productId)
+        .subscribe((res) => {
+          this.products.push({
+            item: res,
+            quantity: this.details.products[i].quantity,
+          });
+          this.total +=
+            this.products[+i].item.price * this.products[+i].quantity;
+        });
     }
-  }
-
-  addCart() {
-    let porducts = this.cartProducts.map((item) => {
-      return { productId: item.item.id, quantity: item.quantity };
-    });
-    let Model: Model = {
-      userId: 5,
-      date: new Date(),
-      products: porducts,
-    };
-
-    this.service.createNewCart(Model).subscribe((res) => {
-      this.success = true;
-    });
   }
 }

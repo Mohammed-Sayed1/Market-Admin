@@ -7,7 +7,7 @@ import { Product } from '../../../shared/models/product';
   styleUrls: ['./product.component.scss'],
 })
 export class ProductComponent implements OnInit {
-  @Input() data!: Product;
+  @Input() data!: any;
   @Output() item = new EventEmitter();
   addButton: boolean = false;
   amount: number = 0;

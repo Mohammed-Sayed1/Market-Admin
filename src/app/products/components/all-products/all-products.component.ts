@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductsService } from '../../services/products.service';
 import { Product } from '../../../shared/models/product';
 import { CartProduct } from '../../../shared/models/cart-product';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-all-products',
@@ -12,10 +13,18 @@ export class AllProductsComponent implements OnInit {
   products: Product[] = [];
   categories: string[] = [];
   loading: boolean = false;
-  cartProducts: CartProduct[] = [];
-  constructor(private service: ProductsService) {}
+  base64: any = '';
+  form!: FormGroup;
+  constructor(private service: ProductsService, private build: FormBuilder) {}
 
   ngOnInit(): void {
+    this.form = this.build.group({
+      title: ['', [Validators.required]],
+      price: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      image: ['', [Validators.required]],
+      category: ['', [Validators.required]],
+    });
     this.getProducts();
     this.getCategories();
   }
@@ -35,46 +44,34 @@ export class AllProductsComponent implements OnInit {
   }
 
   getCategories() {
-    this.loading = true;
     return this.service.getAllCategories().subscribe(
       (res: any) => {
         this.categories = res;
-        this.loading = false;
       },
       (error) => {
-        this.loading = false;
         alert(error.message);
       }
     );
   }
 
-  filterCategory(event: any) {
-    let value = event.target.value;
-    value == 'all' ? this.getProducts() : this.getProductsCategory(value);
-  }
-  getProductsCategory(keyword: string) {
-    this.loading = true;
-    this.service.getProductsByCategory(keyword).subscribe((res: any) => {
-      this.products = res;
-      this.loading = false;
-    });
+  getSelectedCategory(event: any) {
+    this.form.get('category')?.setValue(event.target.value);
   }
 
-  addToCart(event: any) {
-    if ('cart' in localStorage) {
-      this.cartProducts = JSON.parse(localStorage.getItem('cart')!);
-      let exist = this.cartProducts.find(
-        (item) => item.item.id == event.item.id
-      );
-      if (exist) {
-        alert(`The product is already in your cart`);
-      } else {
-        this.cartProducts.push(event);
-        localStorage.setItem('cart', JSON.stringify(this.cartProducts));
-      }
-    } else {
-      this.cartProducts.push(event);
-      localStorage.setItem('cart', JSON.stringify(this.cartProducts));
-    }
+  getImagePath(event: any) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      this.base64 = reader.result;
+      this.form.get('image')?.setValue('this text instaed of base64');
+    };
+  }
+
+  addProduct() {
+    const model = this.form.value;
+    this.service.createProduct(model).subscribe((res) => {
+      alert('Product Added Successfully');
+    });
   }
 }
