@@ -9,6 +9,7 @@ export class SelectComponent implements OnInit {
   @Input() title: string = '';
   @Input() data: any[] = [];
   @Output() selectedValue = new EventEmitter();
+  @Input() select = '';
   constructor() {}
 
   ngOnInit(): void {}

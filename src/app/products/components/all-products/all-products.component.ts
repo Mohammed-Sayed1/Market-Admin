@@ -74,4 +74,15 @@ export class AllProductsComponent implements OnInit {
       alert('Product Added Successfully');
     });
   }
+
+  update(item: any) {
+    this.form.patchValue({
+      title: item.title,
+      price: item.price,
+      description: item.description,
+      image: item.image,
+      category: item.category,
+    });
+    this.base64 = item.image;
+  }
 }

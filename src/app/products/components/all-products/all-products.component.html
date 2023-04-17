@@ -29,20 +29,20 @@
         <td>{{ item.title }}</td>
         <td>{{ item.category }}</td>
         <td>{{ item.price }}</td>
+        <td>
+          <button
+            class="btn btn-warning"
+            data-toggle="modal"
+            data-target="#addProduct"
+            (click)="update(item)"
+          >
+            Update
+          </button>
+        </td>
       </tr>
     </tbody>
   </table>
 </div>
-
-<!-- Button trigger modal -->
-<button
-  type="button"
-  class="btn btn-primary"
-  data-toggle="modal"
-  data-target="#staticBackdrop"
->
-  Launch static backdrop modal
-</button>
 
 <!-- Modal -->
 <div
@@ -60,7 +60,7 @@
   >
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Add Product</h5>
+        <h5 class="modal-title" id="staticBackdropLabel">The Product</h5>
         <button
           type="button"
           class="close"
@@ -96,6 +96,7 @@
                 [data]="categories"
                 [title]="'Categories'"
                 (selectedValue)="getSelectedCategory($event)"
+                [select]="form.value.category"
               ></app-select>
             </div>
             <div class="col-md-4 col-sm-12">
@@ -122,7 +123,7 @@
               [disabled]="form.invalid"
               (click)="addProduct()"
             >
-              Add Product
+              Submit
             </button>
           </div>
         </form>
